@@ -126,6 +126,7 @@ main {
     text-transform: uppercase;
     font-size: 18px;
     background-color: transparent;
+    z-index: 10;
     
   }
   
@@ -140,6 +141,7 @@ main {
   
   .card p {
     inset: auto auto 40px 15px; 
+    z-index: 10;
   }
   
   .card a {
@@ -168,11 +170,33 @@ main {
     vertical-align: middle;
   }
   .footer {
-    background-color: #111E2E; /* Choose the background color you prefer */
+    background-color: #111E2E; 
     color: white;
     text-align: center;
     padding: 20px;
     
     bottom: 0;
     width: 100%;
+  }
+  .card:hover .content-container {
+    transform: translateY(-80px); 
+    transition: transform 0.3s ease-in-out;
+    z-index: 1;
+  }
+  
+  .background {
+    position: absolute;
+    background: linear-gradient(to top right, #43389F, #111E2E);
+    height: 5px;
+    width: 100%; 
+    bottom: 0;
+    transition: height 0.3s ease-in-out;
+    z-index: 0;
+    box-shadow: 0 10px 30px 5px rgba(0, 0, 0, 0.2);
+  }
+  
+  .card:hover .background {
+    height: 200px; 
+    transition: height 0.3s ease-in-out;
+    
   }

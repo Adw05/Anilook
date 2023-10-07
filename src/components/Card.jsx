@@ -10,6 +10,7 @@ function Card(props) {
           <p>
             {props.score}
           </p>
+          <div className='background'></div>
           <a href="#" class="button">
       
             <span className='material-symbols-outlined'>
