@@ -1,4 +1,4 @@
-// Create a new file UpcomingAnime.jsx in your components directory
+
 import React from "react";
 import Card from "./Card";
 
