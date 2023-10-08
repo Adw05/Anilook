@@ -30,10 +30,14 @@ function App() {
         <Header />
       </div>
       <div className="slide back2">
-        <UpcomingAnime upcomingAnime={upcomingAnime} />
+        <div className="card-scroll">
+          <UpcomingAnime upcomingAnime={upcomingAnime} />
+        </div>
       </div>
       <div className="slide back3">
-        <Topanime topAnime={topAnime} />
+        <div className="card-scroll">
+          <Topanime topAnime={topAnime} />
+        </div>
       </div>
       <Footer/>
     </div>
