@@ -20,10 +20,6 @@
   min-height: 100vh;
   overflow-x: hidden;
   contain: content;
-  background-image: url('./images/swordfish.jpg');
-  background-size: cover;
-  background-position: center;
-  background-attachment: fixed;
   position: relative;
 }
 
@@ -36,6 +32,35 @@
   bottom: 0;
   background: rgba(0, 0, 0, 0.3);
   z-index: 1;
+}
+
+/* Responsive Background */
+@media (max-width: 768px) {
+  .container {
+    background-size: 100% auto;
+    background-position: top center;
+  }
+}
+
+@media (max-width: 480px) {
+  .container {
+    background-size: auto 100%;
+    background-position: center;
+  }
+}
+
+@media (min-width: 769px) and (max-width: 1024px) {
+  .container {
+    background-size: cover;
+    background-position: center;
+  }
+}
+
+@media (min-width: 1025px) {
+  .container {
+    background-size: 100% 100%;
+    background-position: center;
+  }
 }
 
 .slide {
@@ -51,7 +76,27 @@
 }
 
 /* Background Styles */
-.back1, .back2, .back3 {
+.back1 {
+  background-image: url('./images/swordfish.jpg');
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+  position: relative;
+  will-change: transform;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+}
+
+.back2 {
+  background-image: linear-gradient(to bottom, #111E2E, black);
+  position: relative;
+  will-change: transform;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+}
+
+.back3 {
+  background-image: linear-gradient(to bottom, black, #111E2E);
   position: relative;
   will-change: transform;
   transform: translateZ(0);
