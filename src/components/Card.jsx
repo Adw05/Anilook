@@ -1,24 +1,15 @@
-import React from 'react'
+import React, { memo } from 'react'
 
-function Card(props) {
+const Card = memo(function Card(props) {
   return (
-    
-      <div className="card">
-        <img src={props.image_url} alt=""/>
-        <div className="card-content">
-          <h2>{props.title}</h2>
-          <p>
-            {props.score}
-          </p>
-          <div className='background'></div>
-          <a href="#" class="button">
-      
-            <span className='material-symbols-outlined'>
-            </span>
-          </a>
-        </div>
+    <div className="card">
+      <img src={props.image_url} alt={props.title} loading="lazy" />
+      <div className="card-content">
+        <h2>{props.title}</h2>
+        <p>Score: {props.score}</p>
       </div>
+    </div>
   );
-}
+});
 
 export default Card;

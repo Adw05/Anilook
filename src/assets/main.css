@@ -1,223 +1,281 @@
-*{
-    margin:0px;
-    padding:0px;
-    box-sizing: border-box;
+/* Reset and Base Styles */
+:root {
+  --primary-gradient: linear-gradient(to bottom right, #43389F, #111E2E);
+  --text-gradient: linear-gradient(-225deg, #5d1a0d 0%, #8a2118 29%, hsl(235, 77%, 32%) 67%, #110569 100%);
+  --card-shadow: 0 10px 30px 5px rgba(0, 0, 0, 0.2);
+  --section-bg: linear-gradient(to bottom, #111E2E, black);
 }
-.container{
-  width:100%;
-  height:100vh;
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
-.slide{
-  width:100%;
-  height: 100vh;
-  display:flex;
-  align-items: center;
-  justify-content: center;
-}
-.back1{
+
+/* Container and Layout */
+.container {
+  width: 100%;
+  min-height: 100vh;
+  overflow-x: hidden;
+  contain: content;
   background-image: url('./images/swordfish.jpg');
   background-size: cover;
-  background-repeat: no-repeat;
   background-position: center;
-}
-.back2{
-  background-image: linear-gradient(to bottom, #111E2E, black);
-}
-.back3{
-  background-image: linear-gradient(to bottom, black, #111E2E);
-
+  background-attachment: fixed;
+  position: relative;
 }
 
-header{
-    padding-top: 50px;
-    padding-bottom: 50px;
-    display:flex;
-    justify-content: center;
-    background: transparent;
-    
+.container::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.3);
+  z-index: 1;
+}
+
+.slide {
+  width: 100%;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  contain: content;
+  position: relative;
+  z-index: 2;
+}
+
+/* Background Styles */
+.back1, .back2, .back3 {
+  position: relative;
+  will-change: transform;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+}
+
+.back1::before, .back2::before, .back3::before {
+  display: none;
+}
+
+/* Header Styles */
+header {
+  padding: 2rem 1rem;
+  display: flex;
+  justify-content: center;
+  background: transparent;
+  contain: content;
 }
 
 .headerH1 {
-    font-size:100px;
-    font-weight:900px;
-    text-align:center;
-    background-image: linear-gradient(
-      -225deg,
-      #5d1a0d 0%,
-      #8a2118 29%,
-      hsl(235, 77%, 32%) 67%,
-      #110569 100%
-    );
-    background-size: auto auto;
-    background-clip: border-box;
-    background-size: 200% auto;
-    color: #fff;
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    animation: textclip 2s linear infinite;
-    display: inline-block;
+  font-size: clamp(3rem, 8vw, 6rem);
+  font-weight: 900;
+  text-align: center;
+  background: var(--text-gradient);
+  background-size: 200% auto;
+  color: #fff;
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: textclip 2s linear infinite;
+  will-change: background-position;
+  transform: translateZ(0);
 }
+
 @keyframes textclip {
   to {
     background-position: 200% center;
   }
 }
-.top-anime{
-  padding:50px;
-  text-align: center;
-  color:white;
-  
+
+/* Card Container */
+.card-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 1.5rem;
+  padding: 1rem;
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  will-change: transform;
+  contain: content;
+  transform: translateZ(0);
 }
-.upcoming-anime{
-  padding:50px;
-  text-align: center;
-  color:white
+
+/* Card Styles */
+.card {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 2/3;
+  max-width: 200px;
+  margin: 0 auto;
+  border-radius: 0.75rem;
+  overflow: hidden;
+  cursor: pointer;
+  box-shadow: var(--card-shadow);
+  transition: transform 0.3s ease;
+  will-change: transform;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  perspective: 1000px;
+  contain: content;
 }
 
+.card:hover {
+  transform: translateY(-5px) translateZ(0);
+}
 
-/* CSS FOR CARD */
-main {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    padding: 50px;
-    font-family: "Roboto", sans-serif;
-    overflow-x: auto;
-  }
-  .card-container{
-    display:flex;
-    flex-wrap: nowrap;
-    justify-content: center ;
-    gap:20px;
-    /* overflow:auto;
-    width:calc(100%-100px); */
+.card img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: opacity 0.3s ease;
+  will-change: transform;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  contain: content;
+}
 
+.card-content {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 1.5rem;
+  background: linear-gradient(to top, rgba(0,0,0,0.9), transparent);
+  transform: translateY(100%);
+  transition: transform 0.3s ease;
+  will-change: transform;
+  contain: content;
+}
 
-  }
-  
-  .card {
-    width: 14rem; 
-    height: 20rem;
-    border-radius: 10px;
-    overflow: hidden;
-    cursor: pointer;
-    position: relative;
-    color: #f0f0f0;
-    box-shadow: 0 10px 30px 5px rgba(0, 0, 0, 0.2);
-  }
-  
-  .card img {
-    position: absolute;
-    object-fit: cover;
-    width: 100%;
-    height: 100%;
-    top: 0;
-    left: 0;
-    opacity: 0.9;
-    transition: opacity 0.2s ease-out;
-  }
-  
-  .card h2 {
-    position: absolute;
-    inset: auto auto 15px 15px; 
-    margin: 0;
-    transition: inset 0.3s 0.3s ease-out;
-    font-family: "Roboto Condensed", sans-serif;
-    font-weight: normal;
-    text-transform: uppercase;
-    font-size: 18px;
-    background-color: transparent;
-    z-index: 10;
-    
-  }
-  
-  .card p,
-  .card a {
-    position: absolute;
-    opacity: 0;
-    max-width: 80%;
-    transition: opacity 0.3s ease-out;
-    background-color: transparent;
-  }
-  
-  .card p {
-    inset: auto auto 40px 15px; 
-    z-index: 10;
-  }
-  
-  .card a {
-    inset: auto auto 20px 15px; 
-    color: inherit;
-    text-decoration: none;
-  }
-  
-  .card:hover h2 {
-    inset: auto auto 100px 15px; 
-    transition: inset 0.3s ease-out;
-  }
-  
-  .card:hover p,
-  .card:hover a {
-    opacity: 1;
-    transition: opacity 0.5s 0.1s ease-in;
-  }
-  
-  .card:hover img {
-    transition: opacity 0.3s ease-in;
-    opacity: 1;
-  }
-  
-  .material-symbols-outlined {
-    vertical-align: middle;
-  }
-  .footer {
-    background-color: #111E2E; 
-    color: white;
-    text-align: center;
-    padding: 20px;
-    
-    bottom: 0;
-    width: 100%;
-  }
-  .card:hover .content-container {
-    transform: translateY(-80px); 
-    transition: transform 0.3s ease-in-out;
-    z-index: 1;
-  }
-  
-  .background {
-    position: absolute;
-    background: linear-gradient(to top right, #43389F, #111E2E);
-    height: 5px;
-    width: 100%; 
-    bottom: 0;
-    transition: height 0.3s ease-in-out;
-    z-index: 0;
-    box-shadow: 0 10px 30px 5px rgba(0, 0, 0, 0.2);
-  }
-  
-  .card:hover .background {
-    height: 200px; 
-    transition: height 0.3s ease-in-out;
-    
-  }
-  .card-scroll{
-    display:flex;
-    overflow-x: scroll;
-    scroll-snap-type: x mandatory;
-  }
-  .card-scroll::-webkit-scrollbar {
-    width: 5px; 
+.card:hover .card-content {
+  transform: translateY(0) translateZ(0);
+}
+
+.card h2 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: white;
+  margin-bottom: 0.5rem;
+}
+
+.card p {
+  color: rgba(255,255,255,0.8);
+  font-size: 0.875rem;
+}
+
+/* Section Headers */
+.top-anime,
+.upcoming-anime {
+  padding: 2rem;
+  text-align: center;
+  color: white;
+  font-size: clamp(1.5rem, 4vw, 2.5rem);
+  margin-bottom: 1rem;
+}
+
+/* Scroll Container */
+.card-scroll {
+  width: 100%;
+  overflow-y: auto;
+  height: calc(100vh - 200px);
+  padding: 1rem;
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+  contain: content;
+  will-change: transform;
+  transform: translateZ(0);
+}
+
+.card-scroll::-webkit-scrollbar {
+  width: 8px;
 }
 
 .card-scroll::-webkit-scrollbar-thumb {
-  background: linear-gradient(to top right, #43389F, #111E2E);
-    border-radius: 8px; 
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 4px;
 }
 
 .card-scroll::-webkit-scrollbar-track {
-    background-color: transparent; 
+  background: transparent;
+}
+
+/* Footer */
+.footer {
+  background-color: #111E2E;
+  color: white;
+  text-align: center;
+  padding: 2rem;
+  width: 100%;
+}
+
+/* Responsive Utilities */
+@media (max-width: 768px) {
+  .card-container {
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 1rem;
+  }
+  
+  .slide {
+    padding: 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .card-container {
+    grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+  }
+  
+  .headerH1 {
+    font-size: 2.5rem;
+  }
+}
+
+/* Ensure content stays above background overlay */
+.slide > * {
+  position: relative;
+  z-index: 2;
+}
+
+/* Loading Spinner */
+.loading {
+  display: flex;
+  justify-content: center;
+  padding: 2rem;
+  contain: content;
+}
+
+.loading-spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid rgba(255, 255, 255, 0.1);
+  border-radius: 50%;
+  border-top-color: #fff;
+  animation: spin 1s ease-in-out infinite;
+  will-change: transform;
+  transform: translateZ(0);
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg) translateZ(0);
+  }
+}
+
+.error-message, .no-results {
+  color: #fff;
+  text-align: center;
+  padding: 2rem;
+  font-size: 1.2rem;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  margin: 1rem auto;
+  max-width: 600px;
+  contain: content;
 }
