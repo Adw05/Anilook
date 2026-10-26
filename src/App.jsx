@@ -7,85 +7,123 @@ import Footer from "./components/Footer";
 function App() {
   const [topAnime, setTopAnime] = useState([]);
   const [upcomingAnime, setUpcomingAnime] = useState([]);
-  const [page, setPage] = useState(1);
   const [loading, setLoading] = useState(false);
   const [hasMore, setHasMore] = useState(true);
   const [initialLoading, setInitialLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [topError, setTopError] = useState(null);
+  const [upcomingError, setUpcomingError] = useState(null);
   const observer = useRef();
   const lastAnimeElementRef = useRef(null);
+  const initialFetchStartedRef = useRef(false);
+  const topRequestInFlightRef = useRef(false);
+  const upcomingRequestInFlightRef = useRef(false);
+  const pageRef = useRef(1);
+  const hasMoreRef = useRef(true);
+  const upcomingAnimeRef = useRef([]);
 
   // API endpoints
   const jikanURLtop = "https://api.jikan.moe/v4/top/anime?filter=bypopularity&limit=20";
   const jikanURLupcoming = "https://api.jikan.moe/v4/seasons/now";
 
-  // Memoize the fetch functions
-  const fetchTopAnime = useCallback(async () => {
-    try {
-      const response = await fetch(jikanURLtop);
-      
-      if (!response.ok) {
-        if (response.status === 429) {
-          await new Promise(resolve => setTimeout(resolve, 1000));
-          return fetchTopAnime();
+  const fetchJsonWithRetry = useCallback(async (url, options = {}) => {
+    const { maxRetries = 3, initialDelayMs = 500 } = options;
+    let retryDelay = initialDelayMs;
+
+    for (let attempt = 0; attempt <= maxRetries; attempt += 1) {
+      try {
+        const response = await fetch(url);
+
+        if (response.ok) {
+          return response.json();
         }
+
+        const isRetriable = response.status === 429 || response.status >= 500;
+        if (isRetriable && attempt < maxRetries) {
+          const waitMs = retryDelay;
+          await new Promise((resolve) => setTimeout(resolve, waitMs));
+          retryDelay *= 2;
+          continue;
+        }
+
         throw new Error(`HTTP error! status: ${response.status}`);
+      } catch (error) {
+        if (attempt < maxRetries) {
+          const waitMs = retryDelay;
+          await new Promise((resolve) => setTimeout(resolve, waitMs));
+          retryDelay *= 2;
+          continue;
+        }
+
+        throw error;
       }
-      
-      const result = await response.json();
-      
-      if (result && result.data) {
-        setTopAnime(result.data);
-      } else {
-        setError("Invalid data format received from API");
-      }
-    } catch (error) {
-      setError(`Error fetching top anime: ${error.message}`);
-    } finally {
-      setInitialLoading(false);
     }
+
+    throw new Error("Failed to fetch data");
   }, []);
 
-  const fetchUpcomingAnime = useCallback(async () => {
-    if (loading || !hasMore || upcomingAnime.length >= 20) return;
-    
-    setLoading(true);
+  // Memoize the fetch functions
+  const fetchTopAnime = useCallback(async () => {
+    if (topRequestInFlightRef.current) return;
+
+    topRequestInFlightRef.current = true;
+    setTopError(null);
     try {
-      const response = await fetch(`${jikanURLupcoming}?page=${page}&limit=20`);
-      
-      if (!response.ok) {
-        if (response.status === 429) {
-          await new Promise(resolve => setTimeout(resolve, 1000));
-          return fetchUpcomingAnime();
-        }
-        throw new Error(`HTTP error! status: ${response.status}`);
+      const result = await fetchJsonWithRetry(jikanURLtop);
+
+      if (!result || !Array.isArray(result.data)) {
+        throw new Error("Invalid data format received from API");
       }
-      
-      const result = await response.json();
-      
-      if (result && result.data) {
-        setUpcomingAnime(prev => {
-          const newItems = result.data.filter(newItem => 
-            !prev.some(existingItem => existingItem.mal_id === newItem.mal_id)
-          );
-          const combined = [...prev, ...newItems];
-          // Limit to 20 items
-          return combined.slice(0, 20);
-        });
-        setPage(prev => prev + 1);
-        setHasMore(upcomingAnime.length < 20);
-      } else {
-        setError("Invalid data format received from API");
-      }
+
+      setTopAnime(result.data);
     } catch (error) {
-      setError(`Error fetching upcoming anime: ${error.message}`);
+      setTopError(`Error fetching top anime: ${error.message}`);
     } finally {
+      topRequestInFlightRef.current = false;
+      setInitialLoading(false);
+    }
+  }, [fetchJsonWithRetry]);
+
+  const fetchUpcomingAnime = useCallback(async () => {
+    if (upcomingRequestInFlightRef.current || !hasMoreRef.current || upcomingAnimeRef.current.length >= 20) return;
+
+    upcomingRequestInFlightRef.current = true;
+    setLoading(true);
+    setUpcomingError(null);
+    try {
+      const result = await fetchJsonWithRetry(`${jikanURLupcoming}?page=${pageRef.current}&limit=20`);
+
+      if (!result || !Array.isArray(result.data)) {
+        throw new Error("Invalid data format received from API");
+      }
+
+      const currentItems = upcomingAnimeRef.current;
+      const newItems = result.data.filter(
+        (newItem) => !currentItems.some((existingItem) => existingItem.mal_id === newItem.mal_id)
+      );
+      const combined = [...currentItems, ...newItems].slice(0, 20);
+      const paginationHasNext = result.pagination?.has_next_page === true;
+      const hasNextPage = paginationHasNext && combined.length < 20;
+
+      upcomingAnimeRef.current = combined;
+      hasMoreRef.current = hasNextPage;
+
+      setUpcomingAnime(combined);
+      setHasMore(hasNextPage);
+
+      pageRef.current += 1;
+    } catch (error) {
+      setUpcomingError(`Error fetching upcoming anime: ${error.message}`);
+    } finally {
+      upcomingRequestInFlightRef.current = false;
       setLoading(false);
     }
-  }, [loading, hasMore, page, upcomingAnime.length]);
+  }, [fetchJsonWithRetry]);
 
   // Initial data fetching
   useEffect(() => {
+    if (initialFetchStartedRef.current) return;
+
+    initialFetchStartedRef.current = true;
     fetchTopAnime();
     fetchUpcomingAnime();
   }, [fetchTopAnime, fetchUpcomingAnime]);
@@ -130,7 +168,7 @@ function App() {
             lastAnimeElementRef={lastAnimeElementRef}
             loading={loading}
             initialLoading={initialLoading}
-            error={error}
+            error={upcomingError}
           />
         </div>
       </div>
@@ -139,7 +177,7 @@ function App() {
           <Topanime 
             topAnime={topAnime} 
             initialLoading={initialLoading}
-            error={error}
+            error={topError}
           />
         </div>
       </div>

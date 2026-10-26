@@ -1,10 +1,15 @@
 import React from "react";
 import Card from "./Card";
 
-function UpcomingAnime({ upcomingAnime, lastAnimeElementRef, loading, initialLoading }) {
+function UpcomingAnime({ upcomingAnime, lastAnimeElementRef, loading, initialLoading, error }) {
   return (
     <div>
       <h2 className="upcoming-anime">Top Airing</h2>
+      {error && (
+        <div className="error-message">
+          {error}
+        </div>
+      )}
       <div className="card-container">
         {initialLoading ? (
           <div className="loading">
@@ -17,7 +22,7 @@ function UpcomingAnime({ upcomingAnime, lastAnimeElementRef, loading, initialLoa
                 <div ref={lastAnimeElementRef} key={anime.mal_id}>
                   <Card
                     title={anime.title}
-                    image_url={anime.images.jpg.image_url}
+                    image_url={anime.images?.jpg?.image_url}
                     score={anime.score}
                   />
                 </div>
@@ -27,7 +32,7 @@ function UpcomingAnime({ upcomingAnime, lastAnimeElementRef, loading, initialLoa
               <Card
                 key={anime.mal_id}
                 title={anime.title}
-                image_url={anime.images.jpg.image_url}
+                image_url={anime.images?.jpg?.image_url}
                 score={anime.score}
               />
             );
